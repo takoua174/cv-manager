@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
-
-export class GenericService<T extends Record<string, any>> {
+import { BaseEntity } from '../entities/baseEntity';
+export class GenericService<T extends BaseEntity> {
   // T entité générique définie par une contrainte pour que T est un objet
   constructor(private repository: Repository<T>) {}
 

@@ -1,11 +1,12 @@
 // src/user/entities/user.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Cv } from '../../cv/entities/cv.entity';
+import { BaseEntity } from 'src/common/entities/baseEntity';
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  declare id: number;
 
   @Column({ unique: true })
   username: string;

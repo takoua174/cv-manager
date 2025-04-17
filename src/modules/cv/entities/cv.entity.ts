@@ -9,11 +9,12 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Skill } from '../../skill/entities/skill.entity';
+import { BaseEntity } from 'src/common/entities/baseEntity';
 
 @Entity()
-export class Cv {
+export class Cv extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  declare id: number;
 
   @Column()
   name: string;

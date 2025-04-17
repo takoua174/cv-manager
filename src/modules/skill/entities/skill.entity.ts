@@ -1,10 +1,11 @@
 // src/skill/entities/skill.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { BaseEntity } from 'src/common/entities/baseEntity';
 
 @Entity()
-export class Skill {
+export class Skill extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  declare id: number;
 
   @Column()
   designation: string;
