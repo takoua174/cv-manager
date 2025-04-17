@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.1.4",
     "@nestjs/typeorm": "^11.0.0",
+    "class-validator": "^0.14.1",
     "dotenv": "^16.5.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.14.0",
