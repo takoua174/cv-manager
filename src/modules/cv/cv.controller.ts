@@ -65,7 +65,6 @@ export class CvController {
     }
     return this.cvService.update(+id, updateCvDto);
   }
-
   
   @Delete(':id')
   remove(@Param('id') id: string) {

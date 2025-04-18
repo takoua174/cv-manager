@@ -1,0 +1,11 @@
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NDk3OTAyNn0.7-HDsVI_PVMgHop5RFXP5NWey2VctcERZsd0nckBQcI"
+}
+{
+    "name": "Achref",
+    "firstname": "Hemissi",
+    "age": 21,
+    "cin": "12345678",
+    "job": "Software Engineer",
+    "path": "uploads/john_doe.jpg"
+  }
