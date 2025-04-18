@@ -12,4 +12,8 @@ export class CvService extends GenericService<Cv> {
   ) {
     super(cvRepository);
   }
+
+  async findByUser(userId: number): Promise<Cv[]> {
+    return this.cvRepository.find({ where: { user: { id: userId } } });
+  }
 }

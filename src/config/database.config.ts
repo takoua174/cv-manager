@@ -17,3 +17,7 @@ export const AppDataSource = new DataSource({
 // npm run migration:generate -- src/migrations/"migration_name".ts
 //éxecuter migration
 // npm run migration:run
+export const JwtConfig = {
+  secret: process.env.JWT_SECRET as string, // Type assertion after validation
+  expiresIn: process.env.JWT_EXPIRES_IN || '1h', // Fallback to 1 hour
+};

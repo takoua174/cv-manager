@@ -12,4 +12,8 @@ export class UserService extends GenericService<User> {
   ) {
     super(userRepository);
   }
+
+  async findOneByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { username } });
+  }
 }
