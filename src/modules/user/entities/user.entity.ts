@@ -1,7 +1,7 @@
 // src/user/entities/user.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Cv } from '../../cv/entities/cv.entity';
-import { BaseEntity } from 'src/common/entities/baseEntity';
+import { BaseEntity } from '../../../common/entities/baseEntity';
 
 @Entity()
 export class User extends BaseEntity {

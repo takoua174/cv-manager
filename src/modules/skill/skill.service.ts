@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
-import { GenericService } from 'src/common/services/generic.service';
+import { GenericService } from '../../common/services/generic.service';
 import { Skill } from './entities/skill.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

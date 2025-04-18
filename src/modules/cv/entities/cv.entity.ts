@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Skill } from '../../skill/entities/skill.entity';
-import { BaseEntity } from 'src/common/entities/baseEntity';
+import { BaseEntity } from '../../../common/entities/baseEntity';
 
 @Entity()
 export class Cv extends BaseEntity {
