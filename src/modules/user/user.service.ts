@@ -12,4 +12,8 @@ export class UserService extends GenericService<User> {
   ) {
     super(userRepository);
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
+  }
 }

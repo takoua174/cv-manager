@@ -1,13 +1,19 @@
-// filepath: c:\gl3\s2\web\cv-manager\src\cv\cv.module.ts
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { CvController } from './cv.controller';
+import { CvService } from './cv.service';
+import { AuthMiddleware } from '../../middlewares/auth.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cv } from './entities/cv.entity';
-import { CvService } from './cv.service';
-import { CvController } from './cv.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cv])],
-  providers: [CvService],
   controllers: [CvController],
+  providers: [CvService],
 })
-export class CvModule {}
+export class CvModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: 'cv', method: RequestMethod.ALL });
+  }
+}

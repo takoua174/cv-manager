@@ -6,6 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { SkillModule } from './modules/skill/skill.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './config/database.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AppDataSource } from './config/database.config';
     CvModule,
     UserModule,
     SkillModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,7 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
@@ -16,27 +20,51 @@ export class CvController {
   constructor(private readonly cvService: CvService) {}
 
   @Post()
-  create(@Body() createCvDto: CreateCvDto) {
-    return this.cvService.create(createCvDto);
+  async create(@Body() createCvDto: CreateCvDto, @Req() req: Request) {
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+    return this.cvService.create({ ...createCvDto, userId });
   }
 
   @Get()
-  findAll() {
-    return this.cvService.findAll();
+  async findAll(@Req() req: Request) {
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+    return this.cvService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string, @Req() req: Request) {
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.cvService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCvDto: UpdateCvDto,
+    @Req() req: Request,
+  ) {
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.cvService.update(+id, updateCvDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @Req() req: Request) {
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.cvService.remove(+id);
   }
 }
