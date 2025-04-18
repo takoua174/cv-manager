@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DeepPartial, IsNull } from 'typeorm';
 import { GenericService } from '../../common/services/generic.service';
-import { Cv } from '../../modules/cv/entities/cv.entity';
-import { Repository } from 'typeorm';
-//hadha ymarki el class as provider
+import { Cv } from './entities/cv.entity';
+import { CreateCvDto } from './dto/create-cv.dto';
+
 @Injectable()
 export class CvService extends GenericService<Cv> {
   constructor(
@@ -12,13 +13,19 @@ export class CvService extends GenericService<Cv> {
   ) {
     super(cvRepository);
   }
-  
 
-  async findByUser(userId: number): Promise<Cv[]> {
-    return this.cvRepository.find({ where: { user: { id: userId } } });
+  async createWithUser(createCvDto: CreateCvDto, user: any): Promise<Cv> {
+    const cvData: DeepPartial<Cv> = {
+      ...createCvDto,
+      user: { id: user.userId },
+    };
+    const cv = this.cvRepository.create(cvData);
+    return this.cvRepository.save(cv);
   }
 
-  
-
-  
+  async findByUser(userId: number): Promise<Cv[]> {
+    return this.cvRepository.find({
+      where: { user: { id: userId }, deletedAt: IsNull() },
+    });
+  }
 }

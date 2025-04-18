@@ -1,4 +1,3 @@
-// filepath: c:\gl3\s2\web\cv-manager\src\cv\cv.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cv } from './entities/cv.entity';
@@ -9,8 +8,6 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Cv]),
   AuthModule,
-
-
   ],
   providers: [CvService],
   controllers: [CvController],

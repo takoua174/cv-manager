@@ -1,8 +1,8 @@
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Repository, DeepPartial } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { BaseEntity } from '../entities/baseEntity';
-export class GenericService<T extends BaseEntity> {
-  // T entité générique définie par une contrainte pour que T est un objet
+
+export class GenericService<T  extends BaseEntity> {
   constructor(private repository: Repository<T>) {}
 
   async findAll(): Promise<T[]> {
@@ -10,8 +10,6 @@ export class GenericService<T extends BaseEntity> {
   }
 
   async findOne(id: number): Promise<T> {
-    //{ where: { id } } : objet de configuration
-    // as any ala pb de typage mte3 typescript
     const entity = await this.repository.findOne({
       where: { id, deletedAt: null } as any,
     });
@@ -21,22 +19,21 @@ export class GenericService<T extends BaseEntity> {
     return entity;
   }
 
-  async create(createDto: any): Promise<T[]> {
+  async create(createDto: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(createDto);
     return this.repository.save(entity);
   }
 
-  async update(id: number, updateDto: any): Promise<T> {
-    await this.findOne(id); // Vérifie si l'entité existe
+  async update(id: number, updateDto: DeepPartial<T>): Promise<T> {
+    await this.findOne(id);
     const updatedData = {
-      ...updateDto, // ... spread operator
+      ...updateDto,
       updatedAt: new Date(),
     };
-    await this.repository.update(id, updateDto);
+    await this.repository.update(id, updatedData as any);
     return this.findOne(id);
   }
 
-  //it is soft delete
   async remove(id: number): Promise<void> {
     const entity = await this.findOne(id);
     entity.deletedAt = new Date();

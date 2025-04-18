@@ -17,7 +17,7 @@ async function bootstrap() {
       name: randLastName(),
       firstname: randFirstName(),
       age: randNumber({ min: 20, max: 60 }),
-      cin: `${randNumber({ min: 10000000, max: 99999999 })}`,
+      cin: randNumber({ min: 10000000, max: 99999999 }),
       job: randJobTitle(),
     });
   }
