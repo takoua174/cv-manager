@@ -16,14 +16,14 @@ async function bootstrap() {
 
   // Fetch existing users to link CVs
   const users = await userService.findAll();
-  if (users.length === 0) {
+  if (users.total === 0) {
     console.log('No users found. Please seed users first.');
     await app.close();
     return;
   }
 
   for (let i = 0; i < 20; i++) {
-    const user = users[Math.floor(Math.random() * users.length)];
+    const user = users[Math.floor(Math.random() * users.total)];
     const fullName = randFullName();
     await cvService.createWithUser(
       {
@@ -34,7 +34,7 @@ async function bootstrap() {
         job: randJobTitle(),
         path: randFilePath(),
       },
-      { userId: user.id }
+      { userId: user.id },
     );
   }
 

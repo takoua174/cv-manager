@@ -3,9 +3,15 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { Logger, PinoLogger } from 'nestjs-pino';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/',
+  });
 
   // Create Swagger configuration
   const config = new DocumentBuilder()
@@ -29,17 +35,20 @@ async function bootstrap() {
   // Create Swagger document
   const document = SwaggerModule.createDocument(app, config);
   const globalPrefix = 'api';
-  app.use(
+  /*   app.use(
     `/${globalPrefix}/docs`,
     apiReference({
       content: document,
       title: 'Evostock API Reference',
       theme: 'default',
     }),
-  );
+  ); */
 
   // Setup Swagger UI
   SwaggerModule.setup('api', app, document);
+  app.useStaticAssets(join(__dirname, '..', 'public'), {
+    prefix: '/public/',
+  });
 
   const apiUrl = 'http://localhost:3000';
 

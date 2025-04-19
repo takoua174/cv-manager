@@ -9,6 +9,10 @@ import {
   UseGuards,
   ForbiddenException,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -19,11 +23,17 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { PaginationDto } from 'src/common/dto/paginationDto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesService } from 'src/files/files.service';
+import { cvImageUploadConfig } from 'src/config/multer.config';
 
 @Controller('cv')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class CvController {
-  constructor(private readonly cvService: CvService) {}
+  constructor(
+    private readonly cvService: CvService,
+    private readonly filesService: FilesService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
@@ -76,5 +86,25 @@ export class CvController {
       throw new ForbiddenException('You can only delete your own CV');
     }
     return this.cvService.remove(+id);
+  }
+
+  @Post('upload-image')
+  @UseInterceptors(FileInterceptor('image', cvImageUploadConfig))
+  async uploadCvImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new HttpException(
+        'Fichier non valide ou taille dépassant 1Mo',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      message: 'Fichier téléchargé avec succès',
+      filename: file.filename,
+      path: `/public/uploads/cv-images/${file.filename}`,
+      url: `http://localhost:3000/public/uploads/cv-images/${file.filename}`,
+      size: file.size,
+      mimetype: file.mimetype,
+    };
   }
 }
