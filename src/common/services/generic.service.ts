@@ -1,4 +1,4 @@
-import { IsNull, Repository, DeepPartial } from 'typeorm';
+import { IsNull, Repository, DeepPartial, FindOptionsWhere, FindOptionsRelations, FindManyOptions } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { BaseEntity } from '../entities/baseEntity';
 
@@ -9,15 +9,21 @@ export class GenericService<T  extends BaseEntity> {
     return this.repository.find({ where: { deletedAt: IsNull() } as any });
   }
 
-  async findOne(id: number): Promise<T> {
+  async findOne(
+    id: number,
+    options?: FindManyOptions<T>,
+  ): Promise<T> {
     const entity = await this.repository.findOne({
-      where: { id, deletedAt: null } as any,
+      ...options,
+      where: { id, ...options?.where, deletedAt: IsNull() } as FindOptionsWhere<T>,
     });
+
     if (!entity) {
       throw new NotFoundException(`Entity with ID ${id} not found`);
     }
     return entity;
   }
+
 
   async create(createDto: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(createDto);

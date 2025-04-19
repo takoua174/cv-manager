@@ -15,7 +15,9 @@ export class CvController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
+  
   async create(@Body() createCvDto: CreateCvDto, @JwtUser() user) {
+    console.log('Request user:', user);
     return this.cvService.createWithUser(createCvDto, user);
   }
 
