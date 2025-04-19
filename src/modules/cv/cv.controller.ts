@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ForbiddenException,
+  Query,
+} from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
@@ -6,7 +17,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtUser } from '../auth/decorators/user.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { PaginationDto } from 'src/common/dto/paginationDto';
 
 @Controller('cv')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -15,7 +27,6 @@ export class CvController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  
   async create(@Body() createCvDto: CreateCvDto, @JwtUser() user) {
     console.log('Request user:', user);
     return this.cvService.createWithUser(createCvDto, user);
@@ -23,12 +34,14 @@ export class CvController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
- 
-  async findAll(@JwtUser() user) {
+  @ApiBearerAuth('JWT-auth')
+  // using the @query is a solution and using a custom decorator (@Pagination) is another solution
+  async findAll(@JwtUser() user, @Query() pagination: PaginationDto) {
     if (user.role !== 'admin') {
+      // You might want to add pagination to findByUser as well
       return this.cvService.findByUser(user.userId);
     }
-    return this.cvService.findAll();
+    return this.cvService.findAll(pagination);
   }
 
   @Get(':id')
@@ -43,7 +56,11 @@ export class CvController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto, @JwtUser() user) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCvDto: UpdateCvDto,
+    @JwtUser() user,
+  ) {
     const cv = await this.cvService.findOne(+id);
     if (user.role !== 'admin' && cv.user.id !== user.userId) {
       throw new ForbiddenException('You can only update your own CV');

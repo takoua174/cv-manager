@@ -1,21 +1,41 @@
-import { IsNull, Repository, DeepPartial, FindOptionsWhere, FindOptionsRelations, FindManyOptions } from 'typeorm';
+import {
+  IsNull,
+  Repository,
+  DeepPartial,
+  FindOptionsWhere,
+  FindOptionsRelations,
+  FindManyOptions,
+} from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { BaseEntity } from '../entities/baseEntity';
+import { PaginationDto } from '../dto/paginationDto';
 
-export class GenericService<T  extends BaseEntity> {
+export class GenericService<T extends BaseEntity> {
   constructor(private repository: Repository<T>) {}
 
-  async findAll(): Promise<T[]> {
-    return this.repository.find({ where: { deletedAt: IsNull() } as any });
+  async findAll(
+    pagination?: PaginationDto,
+  ): Promise<{ data: T[]; total: number }> {
+    const { page = 1, limit = 10 } = pagination || {};
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.repository.findAndCount({
+      where: { deletedAt: IsNull() } as any,
+      skip,
+      take: limit,
+    });
+
+    return { data, total };
   }
 
-  async findOne(
-    id: number,
-    options?: FindManyOptions<T>,
-  ): Promise<T> {
+  async findOne(id: number, options?: FindManyOptions<T>): Promise<T> {
     const entity = await this.repository.findOne({
       ...options,
-      where: { id, ...options?.where, deletedAt: IsNull() } as FindOptionsWhere<T>,
+      where: {
+        id,
+        ...options?.where,
+        deletedAt: IsNull(),
+      } as FindOptionsWhere<T>,
     });
 
     if (!entity) {
@@ -23,7 +43,6 @@ export class GenericService<T  extends BaseEntity> {
     }
     return entity;
   }
-
 
   async create(createDto: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(createDto);

@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './config/database.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -23,6 +24,19 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     SkillModule,
     AuthModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        // Optional: Pino config
+        transport: {
+          target: 'pino-pretty', // Optional: makes logs readable
+          options: {
+            colorize: true,
+            translateTime: 'SYS:standard',
+            ignore: 'pid,hostname',
+          },
+        },
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
